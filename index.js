@@ -48,30 +48,22 @@ async function run(){
         const usersCollection = database.collection('users');
 
 
-        // //GET Orders API
-        // app.get('/orders', async(req, res) => {
-        //   const cursor = ordersCollection.find({});
-        //   const orders = await cursor.toArray();
-        //   res.json(orders);
-        // });
-
-        app.get('/orders', async (req, res) => {
-          const email = req.query.email;
-          const query = { email: email }
-          const cursor = ordersCollection.find(query);
+        //GET Orders API
+        app.get('/orders', async(req, res) => {
+          const cursor = ordersCollection.find({});
           const orders = await cursor.toArray();
           res.json(orders);
-      })
+        });
 
-        // //GET Orders 
-        // app.get('/orders', async(req, res) => {
-        //   const email = req.query.email;
-        //   const query = { email: email}
-        //   console.log(query)
-        //   const cursor = ordersCollection.find({query});
-        //   const orders = await cursor.toArray();
-        //   res.json(orders);
-        // });
+        //GET Orders 
+        app.get('/orders', verifyToken,  async(req, res) => {
+          const email = req.query.email;
+          const query = { email: email}
+          console.log(query)
+          const cursor = ordersCollection.find({query});
+          const orders = await cursor.toArray();
+          res.json(orders);
+        });
 
         //GET Services API
         app.get('/services', async(req, res) => {
@@ -177,8 +169,16 @@ async function run(){
         });
 
         
-        //DELETE API
+        //DELETE Order API
         app.delete('/orders/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await ordersCollection.deleteOne(query);
+            res.json(result);
+        });
+
+        //DELETE service API
+        app.delete('/services/:id', async(req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
             const result = await ordersCollection.deleteOne(query);
